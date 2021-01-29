@@ -1,0 +1,24 @@
+compat: v0
+id: bitcoind
+version: "1.2.0d"
+title: "Haven Core"
+description:
+  short: "A Haven Full Node by Haven Team"
+  long: "Haven is an ecosystem of untraceable assets that enables users to convert between volatile assets and stable currencies directly within their vault, with complete privacy."
+release-notes: https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-0.21.0.md
+ports:
+  - internal: 17750
+    tor: 17750
+  - internal: 17749
+    tor: 17749
+image:
+  type: tar
+mount: /root/.haven
+has-instructions: true
+os-version-required: ">=0.2.8"
+os-version-recommended: ">=0.2.8"
+install-alert: 
+uninstall-alert: 
+restore-alert: 
+assets: []
+hidden-service-version: v3
