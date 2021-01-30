@@ -20,5 +20,8 @@ os-version-recommended: ">=0.2.8"
 install-alert:
 uninstall-alert:
 restore-alert:
-assets: []
+assets:
+  - src: havend.conf.template
+    dst: "."
+    overwrite: true
 hidden-service-version: v3
