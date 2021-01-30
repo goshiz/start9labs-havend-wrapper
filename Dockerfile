@@ -1,6 +1,7 @@
 FROM alpine:3.12 as builder
 
 ARG CXXFLAGS="-DSTACK_TRACE:BOOL -DELPP_FEATURE_CRASH_LOG"
+ARG HAVEN_VERSION=
 
 RUN apk --no-cache add git 
 RUN apk --no-cache add bash
@@ -20,9 +21,9 @@ RUN ./bootstrap.sh
 RUN ./b2 install
 
 WORKDIR /
-RUN git clone --recursive --depth 1 --branch v1.2.0d --single-branch https://github.com/haven-protocol-org/haven-offshore.git 
+RUN git clone --recursive --depth 1 --branch ${HAVEN_VERSION} --single-branch https://github.com/haven-protocol-org/haven-offshore.git 
 WORKDIR /haven-offshore
-RUN ./build-haven.sh release-static -j${nproc}
+RUN ./build-haven.sh release-static-linux-armv7 -j${nproc}
 
 FROM alpine:3.12  as runner
 
