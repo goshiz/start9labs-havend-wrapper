@@ -94,7 +94,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             Stat {
                 value_type: "string",
                 value: format!("btcstandup://{}:{}@{}:8332", user, pass, addr),
-                description: Some("Bitcoin-Standup Quick Connect URL"),
+                description: Some("haven-Standup Quick Connect URL"),
                 copyable: true,
                 qr: true,
                 masked: true,
@@ -105,7 +105,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             Stat {
                 value_type: "string",
                 value: format!("{}", user),
-                description: Some("Bitcoin RPC Username"),
+                description: Some("Haven RPC Username"),
                 copyable: true,
                 masked: false,
                 qr: false,
@@ -116,15 +116,15 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             Stat {
                 value_type: "string",
                 value: format!("{}", pass),
-                description: Some("Bitcoin RPC Password"),
+                description: Some("Haven RPC Password"),
                 copyable: true,
                 masked: true,
                 qr: false,
             },
         );
     }
-    let info_res = std::process::Command::new("bitcoin-cli")
-        .arg("-conf=/root/.bitcoin/bitcoin.conf")
+    let info_res = std::process::Command::new("haven-wallet-cli")
+        .arg("-conf=/root/.haven/haven.conf")
         .arg("getblockchaininfo")
         .output()?;
     if info_res.status.success() {
@@ -190,8 +190,8 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             })()
             .unwrap_or(std::f64::INFINITY)
         {
-            std::process::Command::new("bitcoin-cli")
-                .arg("-conf=/root/.bitcoin/bitcoin.conf")
+            std::process::Command::new("haven-wallet-cli")
+                .arg("-conf=/root/.haven/haven.conf")
                 .arg("pruneblockchain")
                 .arg(format!("{}", info.pruneheight + 10))
                 .status()?;
@@ -216,15 +216,15 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
         )
     }
     serde_yaml::to_writer(
-        std::fs::File::create("/root/.bitcoin/start9/.stats.yaml.tmp")?,
+        std::fs::File::create("/root/.haven/start9/.stats.yaml.tmp")?,
         &Stats {
             version: 2,
             data: stats,
         },
     )?;
     std::fs::rename(
-        "/root/.bitcoin/start9/.stats.yaml.tmp",
-        "/root/.bitcoin/start9/stats.yaml",
+        "/root/.haven/start9/.stats.yaml.tmp",
+        "/root/.haven/start9/stats.yaml",
     )?;
     Ok(())
 }
@@ -234,7 +234,7 @@ fn publish_notification(e: &Notification) -> std::io::Result<()> {
         .write(true)
         .create(true)
         .append(true)
-        .open("/root/.bitcoin/start9/notifications.log")?;
+        .open("/root/.haven/start9/notifications.log")?;
     f.write_all(format!("{}:{}:{}:", e.time, e.level, e.code).as_bytes())?;
     write_to_replacing(&e.title, ':', "\u{A789}", &mut f)?;
     f.write_all(b":")?;
@@ -256,7 +256,7 @@ fn notification_handler(line: &str) -> std::io::Result<()> {
             code: 0,
             title: "General Error".to_owned(),
             message: format!(
-                "{}\nBitcoin Core will now be restarted with -reindex.",
+                "{}\nHaven Core will now be restarted with -reindex.",
                 line
             ),
         })?;
@@ -333,14 +333,14 @@ where
 
 fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     let config: Mapping =
-        serde_yaml::from_reader(std::fs::File::open("/root/.bitcoin/start9/config.yaml")?)?;
+        serde_yaml::from_reader(std::fs::File::open("/root/.haven/start9/config.yaml")?)?;
     let sidecar_poll_interval = std::time::Duration::from_secs(5);
     let addr = var("TOR_ADDRESS")?;
     let mut btc_args = vec![
         format!("-onion={}:9050", var("HOST_IP")?),
         format!("-externalip={}", addr),
-        "-datadir=/root/.bitcoin".to_owned(),
-        "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
+        "-datadir=/root/.haven".to_owned(),
+        "-conf=/root/.haven/haven.conf".to_owned(),
     ];
     if config
         .get(&Value::String("advanced".to_owned()))
@@ -355,7 +355,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     }
     {
         // disable chain data backup
-        let mut f = std::fs::File::create("/root/.bitcoin/.backupignore")?;
+        let mut f = std::fs::File::create("/root/.haven/.backupignore")?;
         writeln!(f, "blocks/")?;
         writeln!(f, "chainstate/")?;
         f.flush()?;
@@ -366,14 +366,14 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 
     std::io::copy(
         &mut TemplatingReader::new(
-            std::fs::File::open("/root/.bitcoin/bitcoin.conf.template")?,
+            std::fs::File::open("/root/.haven/haven.conf.template")?,
             &config,
             &"{{var}}".parse()?,
             b'%',
         ),
-        &mut std::fs::File::create("/root/.bitcoin/bitcoin.conf")?,
+        &mut std::fs::File::create("/root/.haven/haven.conf")?,
     )?;
-    let mut child = std::process::Command::new("bitcoind")
+    let mut child = std::process::Command::new("havend")
         .args(btc_args)
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
@@ -420,7 +420,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
             level: Level::Error,
             code: code as usize,
             title: "Fatal Error".to_owned(),
-            message: format!("Bitcoin Core has crashed with exit code: {}", code),
+            message: format!("haven Core has crashed with exit code: {}", code),
         })?;
     }
     if REQUIRES_REINDEX.fetch_and(false, Ordering::SeqCst) {
