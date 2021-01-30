@@ -21,7 +21,7 @@ install-alert:
 uninstall-alert:
 restore-alert:
 assets:
-  - src: havend.conf.template
+  - src: haven.conf.template
     dst: "."
     overwrite: true
 hidden-service-version: v3
