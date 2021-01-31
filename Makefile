@@ -18,7 +18,7 @@ instructions.md: README.md
 	cp README.md instructions.md
 
 image.tar: Dockerfile docker_entrypoint.sh haven/target/armv7-unknown-linux-musleabihf/release/havend manifest.yaml
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/havend --platform=linux/arm/v7 --build-arg HAVEN_VERSION=$(VERSION) -o type=docker,dest=image.tar .
+	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/havend --platform=linux/arm/v7 -o type=docker,dest=image.tar .
 
 haven/target/armv7-unknown-linux-musleabihf/release/havend: $(HAVEN_SRC)
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/haven:/home/rust/src start9/rust-musl-cross:armv7-musleabihf cargo +beta build --release

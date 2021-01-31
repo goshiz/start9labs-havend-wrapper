@@ -3,4 +3,4 @@
 set -euo pipefail
 
 
-exec /usr/local/bin/havend
+exec /usr/local/bin/havend --non-interactive

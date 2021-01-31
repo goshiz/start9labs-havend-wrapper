@@ -1,7 +1,7 @@
 FROM alpine:3.12 as builder
 
 ARG CXXFLAGS="-DSTACK_TRACE:BOOL -DELPP_FEATURE_CRASH_LOG"
-ARG HAVEN_VERSION=
+ARG HAVEN_VERSION=v1.2.0d
 
 RUN apk --no-cache add git 
 RUN apk --no-cache add bash
@@ -29,9 +29,17 @@ FROM alpine:3.12  as runner
 
 RUN apk update
 RUN apk --no-cache add \
-  boost \
   libexecinfo \
   libzmq \
+  boost-system \
+  boost-thread \
+  boost-chrono \
+  boost-regex \
+  boost-serialization \
+  boost-locale \
+  boost-date_time \
+  boost-program_options \
+  boost-filesystem \
   bash \
   su-exec
 
