@@ -1,1 +1,63 @@
-{}
+rpc:
+  type: object
+  nullable: false
+  name: "RPC Settings"
+  description: "RPC configuration options"
+  spec:
+    enabled:
+      type: boolean
+      name: "Enable"
+      description: "Allow remote RPC request"
+      default: true
+    username:
+      type: string
+      nullable: false
+      name: "Username"
+      description: "The username for connecting Haven over RPC"
+      default: "haven"
+      masked: true
+    password:
+      type: string
+      nullable: false
+      name: "Password"
+      description: "The username for connecting Haven over RPC"
+      default: "haven"
+      masked: true
+wallet:
+  type: object
+  nullable: false
+  name: "Wallet Settings"
+  description: "Wallet configuration options"
+  spec:
+    network:
+      type: enum
+      values:
+        - mainnet
+        - testnet
+        - stagenet
+      name: "Network"
+      description: "Network"
+      default: mainnet
+    fixed-difficulty:
+      name: "Fixed Difficulty"
+      description: "Fixed difficulty used for testing"
+      type: number
+      default: 0
+      range: "[1,*)"
+      integral: true
+      units: ~
+
+log:
+  type: object
+  nullable: false
+  name: "Log Settings"
+  description: "Log options"
+  spec:
+    level:
+      name: "Level"
+      description: "Set log level from 0 (no details) and 4 (very verbose)"
+      type: number
+      default: 0
+      range:  "[0,4]"
+      integral: true
+      units: ~
