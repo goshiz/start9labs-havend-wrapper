@@ -10,3 +10,15 @@ confirm-external-bind
 rpc-login={{rpc.username}}:{{rpc.password}}
 
 non-interactive
+
+{{#IF wallet.network = "testnet"
+testnet
+}}
+{{#IF wallet.network = "stagenet"
+stagenet
+}}
+
+log-level={{log.level}}
+
+fixed-difficulty={{wallet.fixed-difficulty}}
+
