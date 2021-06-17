@@ -42,6 +42,7 @@ wallet:
       name: "Fixed Difficulty"
       description: "Fixed difficulty used for testing"
       type: number
+      nullable: false
       default: 0
       range: "[0,*)"
       integral: true
@@ -57,6 +58,7 @@ log:
       name: "Level"
       description: "Set log level from 0 (no details) and 4 (very verbose)"
       type: number
+      nullable: false
       default: 0
       range:  "[0,4]"
       integral: true
